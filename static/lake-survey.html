@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogicGate Lake Surveys — Turn Drone Flights into Recurring Lake Survey Revenue</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1a365d;
+            background: #f7fafc;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 12px;
+            color: #2c5282;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            color: #4a5568;
+        }
+        .hero {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 32px;
+        }
+        .benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        @media (max-width: 600px) {
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+        }
+        .benefit {
+            background: #edf2f7;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        .benefit h3 {
+            margin: 0 0 8px 0;
+            font-size: 1em;
+            color: #2c5282;
+        }
+        .benefit p {
+            margin: 0;
+            font-size: 0.95em;
+            color: #4a5568;
+        }
+        .form-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #2c5282;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            background: #2c5282;
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1em;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #1a365d;
+        }
+        .message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        .message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            display: block;
+        }
+        .message.error {
+            background: #fed7d7;
+            color: #742a2a;
+            display: block;
+        }
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LogicGate Lake Surveys</h1>
+            <p class="subtitle">The lake survey report platform for drone service providers and environmental consultants</p>
+        </header>
+
+        <section class="hero">
+            <p><strong>Turn your drone flights into recurring lake survey revenue.</strong> You fly the lake. We give you a white-label client portal that turns your photos into GPS-tagged, professional PDF reports — and lets you manage every lake client in one place.</p>
+            <div class="benefits">
+                <div class="benefit">
+                    <h3>Recurring Revenue</h3>
+                    <p>Stop selling one-time photo shoots. Sell seasonal lake monitoring subscriptions.</p>
+                </div>
+                <div class="benefit">
+                    <h3>Client-Ready Reports</h3>
+                    <p>Generate PDF reports with lake metadata, flight details, and GPS-tagged image galleries.</p>
+                </div>
+                <div class="benefit">
+                    <h3>Built for Lake Work</h3>
+                    <p>Not a generic mapping tool. Built for lake associations, vegetation tracking, and shoreline monitoring.</p>
+                </div>
+                <div class="benefit">
+                    <h3>White-Label Portal</h3>
+                    <p>Your clients see your lake surveys in a branded portal under your business.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Become a Pilot Partner</h2>
+            <p>We are looking for <strong>3 drone service providers or environmental consultants</strong> in Wisconsin Lake Country to run a pilot lake survey. You fly one lake. We provide the platform and report. After the pilot, revenue-share on future surveys or use the platform free for 90 days.</p>
+            <form id="inquiryForm">
+                <label for="name">Your name *</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="organization">Company name *</label>
+                <input type="text" id="organization" name="organization" required>
+
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone">
+
+                <label for="part_107">Do you have a Part 107 license? *</label>
+                <select id="part_107" name="part_107" required>
+                    <option value="">Select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="partner">I work with a licensed pilot</option>
+                </select>
+
+                <label for="clients">Do you already work with lake associations, environmental consultants, or landowners? *</label>
+                <select id="clients" name="clients" required>
+                    <option value="">Select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No, but interested</option>
+                </select>
+
+                <label for="message">Tell us about your drone work and the lakes you serve</label>
+                <textarea id="message" name="message" rows="4" placeholder="Services you offer, lakes or counties you cover, etc."></textarea>
+
+                <p style="font-size: 0.95em; color: #4a5568;">
+                    <a href="/api/v1/public/demo-report" target="_blank">Download a sample lake survey report</a>
+                    to see what your clients would receive.
+                </p>
+
+                <button type="submit">Apply for Pilot Partnership</button>
+                <div id="formMessage" class="message"></div>
+            </form>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 LogicGate Industrial Systems. Built for Wisconsin lake survey professionals.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const messageEl = document.getElementById('formMessage');
+            const data = {
+                name: form.name.value,
+                email: form.email.value,
+                organization: form.organization.value,
+                phone: form.phone.value,
+                part_107: form.part_107.value,
+                existing_clients: form.clients.value,
+                message: form.message.value,
+                interest: 'lake_survey_partner'
+            };
+
+            try {
+                const response = await fetch('/api/v1/public/inquiries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    messageEl.className = 'message success';
+                    messageEl.textContent = 'Thank you! We will be in touch within 2 business days.';
+                    form.reset();
+                } else {
+                    messageEl.className = 'message error';
+                    messageEl.textContent = result.message || 'Something went wrong. Please try again.';
+                }
+            } catch (err) {
+                messageEl.className = 'message error';
+                messageEl.textContent = 'Network error. Please try again later.';
+            }
+        });
+    </script>
+</body>
+</html>
