@@ -207,7 +207,9 @@ class TierManager:
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 trial_end_date TIMESTAMP,
                 stripe_customer_id TEXT,
-                stripe_subscription_id TEXT
+                stripe_subscription_id TEXT,
+                square_customer_id TEXT,
+                square_subscription_id TEXT
             )
         """)
 

@@ -22,6 +22,7 @@ aiosqlite==0.20.0
 
 # Payments
 stripe==11.0.0
+squareup==44.1.0.20260520
 
 # Caching / rate limiting
 redis==5.2.0

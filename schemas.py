@@ -59,6 +59,7 @@ class SubscriptionResponse(BaseModel):
 
 class CheckoutRequest(BaseModel):
     plan: str
+    gateway: str = "stripe"
     success_url: str
     cancel_url: str
 

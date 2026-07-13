@@ -64,6 +64,12 @@ class Tenant:
     created_at: datetime
     trial_ends_at: datetime | None
     subscription_ends_at: datetime | None
+    billing_email: str | None = None
+    billing_address: str | None = None
+    stripe_customer_id: str | None = None
+    stripe_subscription_id: str | None = None
+    square_customer_id: str | None = None
+    square_subscription_id: str | None = None
 
 
 @dataclass
@@ -118,7 +124,9 @@ class TenantManager:
                 billing_email TEXT,
                 billing_address TEXT,
                 stripe_customer_id TEXT,
-                stripe_subscription_id TEXT
+                stripe_subscription_id TEXT,
+                square_customer_id TEXT,
+                square_subscription_id TEXT
             )
         """)
 
@@ -412,6 +420,8 @@ class TenantManager:
             "billing_address",
             "stripe_customer_id",
             "stripe_subscription_id",
+            "square_customer_id",
+            "square_subscription_id",
         }
 
         fields = {k: v for k, v in kwargs.items() if k in allowed_fields}
@@ -445,6 +455,38 @@ class TenantManager:
 
         return self._row_to_tenant(result)
 
+    def get_tenant_by_square_subscription(self, square_subscription_id: str) -> Tenant | None:
+        """Find tenant by Square subscription ID."""
+        conn = sqlite3.connect(self.shared_db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT * FROM tenants WHERE square_subscription_id = ?", (square_subscription_id,)
+        )
+        result = cursor.fetchone()
+        conn.close()
+
+        if not result:
+            return None
+
+        return self._row_to_tenant(result)
+
+    def get_tenant_by_square_customer(self, square_customer_id: str) -> Tenant | None:
+        """Find tenant by Square customer ID."""
+        conn = sqlite3.connect(self.shared_db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT * FROM tenants WHERE square_customer_id = ?", (square_customer_id,)
+        )
+        result = cursor.fetchone()
+        conn.close()
+
+        if not result:
+            return None
+
+        return self._row_to_tenant(result)
+
     def _row_to_tenant(self, result: tuple) -> Tenant:
         """Convert a tenants row into a Tenant dataclass."""
         return Tenant(
@@ -461,6 +503,12 @@ class TenantManager:
             created_at=datetime.fromisoformat(result[10]) if result[10] else datetime.now(),
             trial_ends_at=datetime.fromisoformat(result[11]) if result[11] else None,
             subscription_ends_at=datetime.fromisoformat(result[12]) if result[12] else None,
+            billing_email=result[13],
+            billing_address=result[14],
+            stripe_customer_id=result[15],
+            stripe_subscription_id=result[16],
+            square_customer_id=result[17],
+            square_subscription_id=result[18],
         )
 
     def add_user_to_tenant(

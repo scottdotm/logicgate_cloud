@@ -34,15 +34,14 @@ class PortalHandler:
         try:
             from alerts.alert_system import AlertSystem
             from analytics.historical_analysis import HistoricalAnalysis
+            from analytics.usage_analytics import UsageAnalytics
             from assets.asset_manager import AssetManager
+            from billing.stripe_manager import StripeBillingManager
+            from branding.white_label_manager import WhiteLabelManager
             from command.command_system import CommandSystem
             from export.data_export import DataExport
             from geofence.geofence_system import GeofenceSystem
             from reporting.report_generator import ReportGenerator
-
-            from analytics.usage_analytics import UsageAnalytics
-            from billing.stripe_manager import StripeBillingManager
-            from branding.white_label_manager import WhiteLabelManager
         except ImportError:
             # Fallback for testing without full module structure
             StripeBillingManager = None  # noqa: N806,F841

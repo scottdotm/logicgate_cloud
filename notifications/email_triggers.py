@@ -12,9 +12,8 @@ from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from jinja2 import Template
-
 from billing.tier_manager import TierLimits
+from jinja2 import Template
 
 # Database path
 SHARED_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logicgate_shared.db")

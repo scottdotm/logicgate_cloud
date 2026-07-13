@@ -1,9 +1,10 @@
 import os
 import tempfile
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
+from logicgate_cloud.billing.square_manager import SquareBillingManager
 from logicgate_cloud.inquiries.models import InquiryManager
 from logicgate_cloud.inquiries.schemas import InquiryCreateRequest, InquiryCreateResponse
 from logicgate_cloud.schemas import (
@@ -49,6 +50,10 @@ def _get_email_service():
     from logicgate_cloud.notifications.email_triggers import EmailTriggerManager
 
     return EmailTriggerManager(_get_shared_db_path())
+
+
+def _get_square_billing_manager():
+    return SquareBillingManager(shared_db_path=_get_shared_db_path())
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -131,7 +136,7 @@ async def signup(request: SignupRequest):
 
 
 @router.post("/stripe/webhook")
-async def stripe_webhook(request):
+async def stripe_webhook(request: Request):
     """Handle Stripe webhook events for subscription lifecycle."""
     stripe_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
     stripe_api_key = os.environ.get("STRIPE_SECRET_KEY")
@@ -168,6 +173,34 @@ async def stripe_webhook(request):
     elif event_type == "customer.subscription.deleted":
         subscription_id = data.get("id")
         _cancel_subscription(subscription_id)
+
+    return {"status": "ok"}
+
+
+@router.post("/square/webhook")
+async def square_webhook(request: Request):
+    """Handle Square webhook events for subscription lifecycle."""
+    notification_url = os.environ.get("SQUARE_WEBHOOK_URL") or str(request.url)
+    manager = _get_square_billing_manager()
+
+    payload = await request.body()
+    signature = request.headers.get("x-square-hmacsha256-signature")
+
+    if not manager.verify_signature(payload, signature, notification_url):
+        raise HTTPException(status_code=400, detail="Invalid signature")
+
+    try:
+        import json
+
+        event = json.loads(payload)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Invalid payload") from e
+
+    try:
+        manager.handle_webhook_event(event)
+    except Exception as e:
+        # Webhooks should return 200 even if internal processing fails.
+        print(f"[SQUARE WEBHOOK] Failed to process event: {e}")
 
     return {"status": "ok"}
 
@@ -234,36 +267,59 @@ def _cancel_subscription(subscription_id: str):
 
 @router.post("/checkout", response_model=CheckoutResponse)
 async def create_checkout(request: CheckoutRequest):
-    stripe_secret = os.environ.get("STRIPE_SECRET_KEY")
-    if not stripe_secret:
-        raise HTTPException(status_code=500, detail="Stripe not configured")
+    gateway = (request.gateway or "stripe").lower()
 
-    try:
-        import stripe
+    if gateway == "stripe":
+        stripe_secret = os.environ.get("STRIPE_SECRET_KEY")
+        if not stripe_secret:
+            raise HTTPException(status_code=500, detail="Stripe not configured")
 
-        stripe.api_key = stripe_secret
+        try:
+            import stripe
 
-        # Look up the price ID for the requested plan from environment variables
-        price_id = os.environ.get(f"STRIPE_PRICE_{request.plan.upper()}")
-        if not price_id:
-            raise HTTPException(
-                status_code=400, detail=f"No Stripe price configured for plan {request.plan}"
+            stripe.api_key = stripe_secret
+
+            # Look up the price ID for the requested plan from environment variables
+            price_id = os.environ.get(f"STRIPE_PRICE_{request.plan.upper()}")
+            if not price_id:
+                raise HTTPException(
+                    status_code=400, detail=f"No Stripe price configured for plan {request.plan}"
+                )
+
+            session = stripe.checkout.Session.create(
+                mode="subscription",
+                line_items=[{"price": price_id, "quantity": 1}],
+                success_url=request.success_url,
+                cancel_url=request.cancel_url,
             )
 
-        session = stripe.checkout.Session.create(
-            mode="subscription",
-            line_items=[{"price": price_id, "quantity": 1}],
-            success_url=request.success_url,
-            cancel_url=request.cancel_url,
-        )
+            return CheckoutResponse(
+                success=True,
+                checkout_url=session.url,
+                message="Checkout session created.",
+            )
+        except stripe.error.StripeError as e:
+            raise HTTPException(status_code=400, detail=f"Stripe error: {e}") from e
 
-        return CheckoutResponse(
-            success=True,
-            checkout_url=session.url,
-            message="Checkout session created.",
-        )
-    except stripe.error.StripeError as e:
-        raise HTTPException(status_code=400, detail=f"Stripe error: {e}") from e
+    if gateway == "square":
+        try:
+            manager = _get_square_billing_manager()
+            checkout_url = manager.create_checkout(
+                plan=request.plan,
+                success_url=request.success_url,
+                cancel_url=request.cancel_url,
+            )
+            return CheckoutResponse(
+                success=True,
+                checkout_url=checkout_url,
+                message="Square checkout session created.",
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
+        except RuntimeError as e:
+            raise HTTPException(status_code=500, detail=str(e)) from e
+
+    raise HTTPException(status_code=400, detail=f"Unsupported payment gateway: {gateway}")
 
 
 @router.post("/inquiries", response_model=InquiryCreateResponse)
