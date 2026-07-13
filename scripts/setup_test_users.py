@@ -6,12 +6,10 @@ Run this after setting up the database to create default users.
 """
 
 import sqlite3
-import sys
 from pathlib import Path
 
-# Add project root to path
-BASE_DIR = Path(__file__).parent
-sys.path.insert(0, str(BASE_DIR))
+# Project root is two levels up from this script
+BASE_DIR = Path(__file__).parent.parent
 
 SHARED_DB_PATH = BASE_DIR / "logicgate_shared.db"
 

@@ -11,12 +11,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
-from config.settings import get_settings
-from core.exceptions import ErrorCode, ErrorSeverity, LogicGateException
-from infrastructure.cache import get_cache_manager
+from logicgate_cloud.config.settings import get_settings
+from logicgate_cloud.core.exceptions import ErrorCode, ErrorSeverity, LogicGateException
+from logicgate_cloud.infrastructure.cache import get_cache_manager
 
 # Infrastructure imports
-from infrastructure.logging import LogLevel, get_logger
+from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
 
 class TestStatus(Enum):

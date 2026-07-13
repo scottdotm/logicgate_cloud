@@ -3,22 +3,11 @@ Comprehensive Unit Tests for Infrastructure Modules
 Tests all infrastructure components: cache, logging, exceptions, settings
 """
 
-import sys
-from pathlib import Path
-
-# Add workspace root and shared ground-station modules to sys.path
-_WORKSPACE_ROOT = Path(__file__).parent.parent.parent
-_MASTER_BASE_DIR = _WORKSPACE_ROOT / "logicgate_master_base"
-for _path in (_MASTER_BASE_DIR, _WORKSPACE_ROOT):
-    if str(_path) not in sys.path:
-        sys.path.insert(0, str(_path))
-
-
 def test_cache_manager_basic():
     """Test basic cache manager operations"""
     print("Testing cache manager basic operations...")
 
-    from infrastructure.cache import get_cache_manager
+    from logicgate_cloud.infrastructure.cache import get_cache_manager
 
     cache = get_cache_manager()
 
@@ -41,7 +30,7 @@ def test_cache_manager_expiration():
 
     import time
 
-    from infrastructure.cache import get_cache_manager
+    from logicgate_cloud.infrastructure.cache import get_cache_manager
 
     cache = get_cache_manager()
 
@@ -73,7 +62,7 @@ def test_cache_manager_types():
     """Test cache with different data types"""
     print("Testing cache with different data types...")
 
-    from infrastructure.cache import get_cache_manager
+    from logicgate_cloud.infrastructure.cache import get_cache_manager
 
     cache = get_cache_manager()
 
@@ -106,7 +95,7 @@ def test_logger_basic():
     """Test basic logging operations"""
     print("Testing basic logging operations...")
 
-    from infrastructure.logging import LogLevel, get_logger
+    from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
     logger = get_logger("test_logger", LogLevel.INFO)
 
@@ -122,7 +111,7 @@ def test_logger_context():
     """Test logging with context"""
     print("Testing logging with context...")
 
-    from infrastructure.logging import LogLevel, get_logger
+    from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
     logger = get_logger("context_logger", LogLevel.INFO)
 
@@ -136,7 +125,7 @@ def test_logger_levels():
     """Test different log levels"""
     print("Testing different log levels...")
 
-    from infrastructure.logging import LogLevel, get_logger
+    from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
     # Test with different levels
     debug_logger = get_logger("debug_logger", LogLevel.DEBUG)
@@ -156,7 +145,7 @@ def test_exceptions_basic():
     """Test basic exception creation"""
     print("Testing basic exception creation...")
 
-    from core.exceptions import (
+    from logicgate_cloud.core.exceptions import (
         AuthenticationException,
         DatabaseException,
         LogicGateException,
@@ -196,7 +185,7 @@ def test_exceptions_to_dict():
     """Test exception serialization"""
     print("Testing exception serialization...")
 
-    from core.exceptions import ErrorCode, ErrorSeverity, LogicGateException
+    from logicgate_cloud.core.exceptions import ErrorCode, ErrorSeverity, LogicGateException
 
     exc = LogicGateException(
         "Test message",
@@ -219,7 +208,7 @@ def test_settings_basic():
     """Test basic settings access"""
     print("Testing basic settings access...")
 
-    from config.settings import get_settings
+    from logicgate_cloud.config.settings import get_settings
 
     settings = get_settings()
 
@@ -240,7 +229,7 @@ def test_settings_subsections():
     """Test settings subsections"""
     print("Testing settings subsections...")
 
-    from config.settings import get_settings
+    from logicgate_cloud.config.settings import get_settings
 
     settings = get_settings()
 
@@ -266,7 +255,7 @@ def test_cached_decorator():
     """Test @cached decorator"""
     print("Testing @cached decorator...")
 
-    from infrastructure.cache import cached
+    from logicgate_cloud.infrastructure.cache import cached
 
     call_count = 0
 
@@ -298,7 +287,7 @@ def test_exception_handler():
     """Test exception handler"""
     print("Testing exception handler...")
 
-    from core.exceptions import ErrorCode, ErrorSeverity, ExceptionHandler, LogicGateException
+    from logicgate_cloud.core.exceptions import ErrorCode, ErrorSeverity, ExceptionHandler, LogicGateException
 
     # Test LogicGateException handling
     exc = LogicGateException("Test error", ErrorCode.VAL_INVALID_INPUT, ErrorSeverity.MEDIUM)
@@ -322,10 +311,10 @@ def test_infrastructure_integration():
     """Test integration of all infrastructure components"""
     print("Testing infrastructure integration...")
 
-    from config.settings import get_settings
-    from core.exceptions import LogicGateException
-    from infrastructure.cache import get_cache_manager
-    from infrastructure.logging import LogLevel, get_logger
+    from logicgate_cloud.config.settings import get_settings
+    from logicgate_cloud.core.exceptions import LogicGateException
+    from logicgate_cloud.infrastructure.cache import get_cache_manager
+    from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
     # Get all components
     cache = get_cache_manager()

@@ -2,13 +2,7 @@
 Test API rate limiting middleware
 """
 
-import sys
 import time
-from pathlib import Path
-
-# Add workspace root to sys.path for logicgate_cloud imports
-_WORKSPACE_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(_WORKSPACE_ROOT))
 
 
 def test_rate_limiter_initialization():
@@ -199,7 +193,7 @@ def test_rate_limit_decorator():
     """Test rate limiting decorator"""
     print("Testing rate limiting decorator...")
 
-    from core.exceptions import RateLimitExceededException
+    from logicgate_cloud.core.exceptions import RateLimitExceededException
 
     from logicgate_cloud.api.rate_limiting import RateLimitAlgorithm, RateLimitConfig, rate_limit
 

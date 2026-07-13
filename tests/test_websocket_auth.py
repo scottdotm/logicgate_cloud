@@ -4,12 +4,6 @@ Tests WebSocket connection authentication and message authorization.
 """
 
 import asyncio
-import sys
-from pathlib import Path
-
-# Add workspace root to sys.path for logicgate_cloud imports
-_WORKSPACE_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(_WORKSPACE_ROOT))
 
 
 def test_websocket_auth_config():
@@ -108,7 +102,7 @@ async def test_authentication_with_invalid_token():
     """Test authentication with invalid token"""
     print("Testing authentication with invalid token...")
 
-    from core.exceptions import AuthenticationException
+    from logicgate_cloud.core.exceptions import AuthenticationException
 
     from logicgate_cloud.api.websocket_auth import WebSocketAuthConfig, WebSocketAuthMiddleware
 
@@ -128,7 +122,7 @@ async def test_connection_limit():
     """Test connection limit enforcement"""
     print("Testing connection limit enforcement...")
 
-    from core.exceptions import AuthenticationException
+    from logicgate_cloud.core.exceptions import AuthenticationException
 
     from logicgate_cloud.api.websocket_auth import WebSocketAuthConfig, WebSocketAuthMiddleware
 

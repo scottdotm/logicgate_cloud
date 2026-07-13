@@ -12,11 +12,11 @@ from enum import Enum
 from functools import wraps
 from typing import Any
 
-from config.settings import get_settings
-from infrastructure.cache import get_cache_manager
+from logicgate_cloud.config.settings import get_settings
+from logicgate_cloud.infrastructure.cache import get_cache_manager
 
 # Infrastructure imports
-from infrastructure.logging import LogLevel, get_logger
+from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
 
 class FlagType(Enum):

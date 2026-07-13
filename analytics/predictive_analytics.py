@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 
-from core.exceptions import BusinessException
+from logicgate_cloud.core.exceptions import BusinessException
 
 
 class MaintenancePriority(Enum):

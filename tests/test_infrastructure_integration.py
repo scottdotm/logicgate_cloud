@@ -3,21 +3,11 @@ Test infrastructure integration with existing modules
 Verifies that cache, logging, and exceptions work correctly in integrated modules
 """
 
-import os
-import sys
 import tempfile
 
-# Add cloud directory and shared ground-station modules to sys.path
-_CLOUD_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_WORKSPACE_ROOT = os.path.dirname(_CLOUD_DIR)
-_MASTER_BASE_DIR = os.path.join(_WORKSPACE_ROOT, "logicgate_master_base")
-for _path in (_MASTER_BASE_DIR, _WORKSPACE_ROOT):
-    if _path not in sys.path:
-        sys.path.insert(0, _path)
-
-from core.exceptions import InvalidCredentialsException, ResourceNotFoundException  # noqa: E402
-from infrastructure.cache import cached, get_cache_manager  # noqa: E402
-from infrastructure.logging import LogLevel, get_logger  # noqa: E402
+from logicgate_cloud.core.exceptions import InvalidCredentialsException, ResourceNotFoundException
+from logicgate_cloud.infrastructure.cache import cached, get_cache_manager
+from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
 
 def test_cache_integration():

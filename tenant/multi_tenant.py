@@ -12,9 +12,9 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 
-from config.settings import get_settings
-from infrastructure.cache import cached, get_cache_manager
-from infrastructure.logging import LogLevel, get_logger
+from logicgate_cloud.config.settings import get_settings
+from logicgate_cloud.infrastructure.cache import cached, get_cache_manager
+from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
 # Database path
 SHARED_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logicgate_shared.db")

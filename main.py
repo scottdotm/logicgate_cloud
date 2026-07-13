@@ -35,7 +35,7 @@ def _validate_secrets():
 
 def _get_logger():
     try:
-        from infrastructure.logging import get_logger
+        from logicgate_cloud.infrastructure.logging import get_logger
 
         return get_logger("logicgate_cloud")
     except Exception:

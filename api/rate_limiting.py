@@ -11,10 +11,10 @@ from enum import StrEnum
 from functools import wraps
 from typing import Any
 
-from config.settings import get_settings
-from core.exceptions import RateLimitExceededException
-from infrastructure.cache import get_cache_manager
-from infrastructure.logging import LogLevel, get_logger
+from logicgate_cloud.config.settings import get_settings
+from logicgate_cloud.core.exceptions import RateLimitExceededException
+from logicgate_cloud.infrastructure.cache import get_cache_manager
+from logicgate_cloud.infrastructure.logging import LogLevel, get_logger
 
 
 class RateLimitAlgorithm(StrEnum):

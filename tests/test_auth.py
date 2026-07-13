@@ -4,16 +4,10 @@ Unit tests for Multi-Tenant Authentication System
 
 import os
 import sqlite3
-import sys
 import tempfile
 import unittest
-from pathlib import Path
 
-# Add workspace root to sys.path for logicgate_cloud imports
-_WORKSPACE_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(_WORKSPACE_ROOT))
-
-from logicgate_cloud.auth.multi_tenant_auth import AuthMiddleware, MultiTenantAuth  # noqa: E402
+from logicgate_cloud.auth.multi_tenant_auth import AuthMiddleware, MultiTenantAuth
 
 
 class TestMultiTenantAuth(unittest.TestCase):
