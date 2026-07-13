@@ -1,6 +1,6 @@
 # LogicGate Cloud
 
-Multi-tenant SaaS backend for the LogicGate industrial asset platform.
+Multi-tenant SaaS backend for the LogicGate industrial asset platform. This repo is a self-contained Python/FastAPI service — it no longer depends on `logicgate_master_base` for `config`, `core`, or `infrastructure` modules.
 
 ## First Vertical: Lake Management
 
@@ -18,7 +18,7 @@ This directory contains the cloud-side components that power the customer-facing
 
 - **Tenant management** — multi-tenant registration, isolation, and resource quotas.
 - **Authentication** — customer accounts, sessions, API keys, and multi-tenant RBAC.
-- **Billing** — subscriptions, plans, Stripe integration, and invoicing.
+- **Billing** — subscriptions, plans, Stripe/Square integration, and invoicing.
 - **Lake management** — lakes, surveys, image uploads, and PDF reports.
 - **Notifications** — welcome emails, onboarding, and trial expiration alerts.
 - **Analytics** — usage analytics, tenant-level metrics, and reporting.
@@ -30,9 +30,21 @@ This directory contains the cloud-side components that power the customer-facing
 - Ground station / mesh receiver code (belongs in `logicgate_master_base`).
 - Edge node / field gateway code (belongs in `logicgate_edge_node`).
 
-## API Surface for the External Website
+## Quick Start
 
-The website project calls this backend via these endpoints:
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set required secrets
+export JWT_SECRET="$(openssl rand -base64 32)"
+export ALLOWED_ORIGINS="https://scottdotm.com,http://localhost:8788"
+
+# Run the server
+python main.py
+```
+
+## API Surface
 
 ### Public
 - `GET /api/v1/public/health` — System health.
@@ -55,6 +67,27 @@ The website project calls this backend via these endpoints:
 - `PATCH /api/v1/portal/surveys/{survey_id}` — Update a survey.
 - `POST /api/v1/portal/surveys/{survey_id}/images` — Upload survey images.
 - `POST /api/v1/portal/surveys/{survey_id}/report` — Generate and download a PDF report.
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `JWT_SECRET` | Yes | — | 32+ character secret for JWT signing |
+| `ALLOWED_ORIGINS` | Yes | `https://scottdotm.com` | Comma-separated CORS origins; `*` is rejected |
+| `SHARED_DB_PATH` | No | `logicgate_shared.db` | Main SQLite database path |
+| `TENANT_DB_DIR` | No | `tenant_databases` | Directory for per-tenant databases |
+| `HOST` / `PORT` | No | `0.0.0.0` / `8000` | HTTP server bind address |
+| `REDIS_HOST` / `REDIS_PORT` | No | `localhost` / `6379` | Redis cache backend |
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | For Stripe | — | Stripe billing |
+| `SQUARE_ACCESS_TOKEN` / `SQUARE_LOCATION_ID` / `SQUARE_WEBHOOK_SECRET` | For Square | — | Square billing |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USERNAME` / `SMTP_PASSWORD` / `SMTP_FROM_EMAIL` | For email | — | SMTP notification delivery |
+| `SENTRY_DSN` | No | — | Sentry error reporting |
+
+## Testing
+
+```bash
+pytest
+```
 
 ## Runtime
 
