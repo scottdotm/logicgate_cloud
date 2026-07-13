@@ -13,8 +13,6 @@ from functools import wraps
 from typing import Any
 
 
-@dataclass
-
 def _json_default(value):
     """Serialize common non-JSON types safely (no pickle)."""
     if isinstance(value, set):
@@ -27,6 +25,8 @@ def _json_default(value):
         return value.isoformat()
     return str(value)
 
+
+@dataclass
 class CacheConfig:
     """Cache configuration"""
 
