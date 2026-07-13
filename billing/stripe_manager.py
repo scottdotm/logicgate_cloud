@@ -157,7 +157,7 @@ class StripeBillingManager:
         cursor.execute(
             """
             UPDATE tenants
-            SET subscription_tier = ?, subscription_renews_at = ?
+            SET plan = ?, subscription_ends_at = ?
             WHERE tenant_id = ?
             """,
             (plan_id, renewal_date.isoformat(), tenant_id),

@@ -401,19 +401,25 @@ class TenantManager:
         return True
 
     def update_tenant(self, tenant_id: int, **kwargs) -> bool:
-        """Update arbitrary tenant fields."""
+        """Update arbitrary tenant fields.
+
+        Plan and tier limits are always derived from the subscription plan via
+        ``update_tenant_plan``; they cannot be set directly with this method.
+        """
         if not kwargs:
             return True
+
+        # Plan changes must route through update_tenant_plan to keep limits in sync.
+        if "plan" in kwargs:
+            self.update_tenant_plan(
+                tenant_id,
+                kwargs.pop("plan"),
+                kwargs.pop("subscription_ends_at", None),
+            )
 
         allowed_fields = {
             "name",
             "status",
-            "plan",
-            "tier",
-            "max_assets",
-            "max_users",
-            "storage_quota_mb",
-            "api_rate_limit",
             "trial_ends_at",
             "subscription_ends_at",
             "billing_email",
@@ -426,7 +432,7 @@ class TenantManager:
 
         fields = {k: v for k, v in kwargs.items() if k in allowed_fields}
         if not fields:
-            return False
+            return True
 
         set_clause = ", ".join(f"{k} = ?" for k in fields)
         values = list(fields.values())

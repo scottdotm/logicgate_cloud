@@ -33,6 +33,15 @@ def _validate_secrets():
         raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
 
 
+def _get_cors_origins():
+    """Return allowed CORS origins; reject wildcard origins."""
+    origins = os.environ.get("ALLOWED_ORIGINS", "https://scottdotm.com")
+    origins = [o.strip() for o in origins.split(",") if o.strip()]
+    if any(o == "*" for o in origins):
+        raise RuntimeError("ALLOWED_ORIGINS cannot contain the '*' wildcard")
+    return origins
+
+
 def _get_logger():
     try:
         from logicgate_cloud.infrastructure.logging import get_logger
@@ -50,7 +59,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
-allowed_origins = os.environ.get("ALLOWED_ORIGINS", "*").split(",")
+allowed_origins = _get_cors_origins()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,

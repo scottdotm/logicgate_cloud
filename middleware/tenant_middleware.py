@@ -90,7 +90,7 @@ class TenantMiddleware:
 
         cursor.execute(
             """
-            SELECT t.tenant_id, t.tenant_name, t.tenant_slug, t.subscription_tier
+            SELECT t.tenant_id, t.tenant_name, t.tenant_slug, t.plan
             FROM tenants t
             JOIN api_keys ak ON t.tenant_id = ak.tenant_id
             WHERE ak.key_hash = ? AND ak.status = 'active'
@@ -121,7 +121,7 @@ class TenantMiddleware:
 
         cursor.execute(
             """
-            SELECT t.tenant_id, t.tenant_name, t.tenant_slug, t.subscription_tier, t.subscription_renews_at,
+            SELECT t.tenant_id, t.tenant_name, t.tenant_slug, t.plan, t.subscription_ends_at,
                    tb.company_name, tb.logo_url, tb.primary_color, tb.secondary_color,
                    tb.custom_domain, tb.custom_css, tb.favicon_url
             FROM tenants t
@@ -171,7 +171,7 @@ class TenantMiddleware:
         self, tenant_context: TenantContext, required_tier: str = None
     ) -> bool:
         """Validate tenant has access to required features based on subscription tier"""
-        tier_hierarchy = {"starter": 1, "professional": 2, "enterprise": 3}
+        tier_hierarchy = {"free": 0, "starter": 1, "professional": 2, "enterprise": 3}
 
         if required_tier:
             current_level = tier_hierarchy.get(tenant_context.subscription_tier, 0)
