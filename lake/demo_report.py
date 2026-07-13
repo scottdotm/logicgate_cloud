@@ -25,7 +25,10 @@ def generate_sample_report(output_path: str) -> str:
         tenant_dir = os.path.join(tmp_dir, "tenants")
         upload_dir = os.path.join(tmp_dir, "uploads")
 
-        jwt_secret = "demo_jwt_secret_at_least_32_chars_long"
+        jwt_secret = os.environ.get("JWT_SECRET")
+        if not jwt_secret or len(jwt_secret) < 32:
+            raise RuntimeError("JWT_SECRET must be set and at least 32 characters long")
+
         auth = MultiTenantAuth(shared_db, jwt_secret)
         tenant_manager = TenantManager(shared_db, tenant_dir)
 
@@ -33,7 +36,7 @@ def generate_sample_report(output_path: str) -> str:
         _ = auth.create_user(
             str(tenant.id),
             "demo@example.com",
-            "DemoPass123!",
+            os.environ.get("DEMO_PASSWORD", "DemoPass123!"),
             full_name="Demo Pilot",
             role="admin",
         )

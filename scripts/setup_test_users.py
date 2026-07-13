@@ -5,11 +5,14 @@ This script creates test users for development and testing purposes.
 Run this after setting up the database to create default users.
 """
 
+import os
 import sqlite3
 from pathlib import Path
 
 # Project root is two levels up from this script
 BASE_DIR = Path(__file__).parent.parent
+
+DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD")
 
 SHARED_DB_PATH = BASE_DIR / "logicgate_shared.db"
 
@@ -37,23 +40,25 @@ def create_test_users():
     tenant_id = result[0]
     print(f"[SETUP] Using tenant_id: {tenant_id}")
 
+    if not DEFAULT_ADMIN_PASSWORD:
+        print("[ERROR] DEFAULT_ADMIN_PASSWORD environment variable is required")
+        conn.close()
+        return False
+
     # Test users to create
     test_users = [
         {
             "email": "admin@horizonavionics.com",
-            "password": "Admin123!",
             "full_name": "System Administrator",
             "role": "admin",
         },
         {
             "email": "operator@horizonavionics.com",
-            "password": "Operator123!",
             "full_name": "Field Operator",
             "role": "operator",
         },
         {
             "email": "viewer@horizonavionics.com",
-            "password": "Viewer123!",
             "full_name": "Analytics Viewer",
             "role": "viewer",
         },
@@ -79,7 +84,6 @@ def create_test_users():
 
     for user_data in test_users:
         email = user_data["email"]
-        password = user_data["password"]
         full_name = user_data["full_name"]
         role = user_data["role"]
 
@@ -94,10 +98,10 @@ def create_test_users():
 
         # Create user
         if auth:
-            user_id = auth.create_user(tenant_id, email, password, full_name, role)
+            user_id = auth.create_user(tenant_id, email, DEFAULT_ADMIN_PASSWORD, full_name, role)
         else:
             # Fallback creation
-            password_hash = simple_hash(password)
+            password_hash = simple_hash(DEFAULT_ADMIN_PASSWORD)
             cursor.execute(
                 """
                 INSERT INTO users (tenant_id, email, password_hash, full_name, role)
@@ -122,7 +126,7 @@ def create_test_users():
         print("=" * 50)
         for user_data in test_users:
             print(f"Email: {user_data['email']}")
-            print(f"Password: {user_data['password']}")
+            print(f"Password: <use DEFAULT_ADMIN_PASSWORD from environment>")
             print(f"Role: {user_data['role']}")
             print("-" * 50)
         print("\nLogin at: http://127.0.0.1:8080/login")
@@ -134,6 +138,10 @@ def create_test_users():
 
 def create_additional_tenant_users():
     """Create users for additional test tenants"""
+
+    if not DEFAULT_ADMIN_PASSWORD:
+        print("[ERROR] DEFAULT_ADMIN_PASSWORD environment variable is required")
+        return
 
     conn = sqlite3.connect(str(SHARED_DB_PATH))
     cursor = conn.cursor()
@@ -164,11 +172,10 @@ def create_additional_tenant_users():
 
         # Create admin user for each tenant
         email = f"admin@{tenant_slug}.com"
-        password = "Admin123!"
         full_name = f"{tenant_name} Administrator"
         role = "admin"
 
-        user_id = auth.create_user(tenant_id, email, password, full_name, role)
+        user_id = auth.create_user(tenant_id, email, DEFAULT_ADMIN_PASSWORD, full_name, role)
 
         if user_id:
             print(f"[CREATE] User {email} created")
